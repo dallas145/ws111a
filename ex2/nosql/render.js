@@ -90,6 +90,7 @@ export function newPost() {
   <p>Create a new post.</p>
   <form action="/post" method="post">
     <p><input type="text" placeholder="Title" name="title"></p>
+    <p><input type="date" value="" name="date"></p>
     <p><textarea placeholder="Contents" name="body"></textarea></p>
     <p><input type="submit" value="Create"></p>
   </form>
