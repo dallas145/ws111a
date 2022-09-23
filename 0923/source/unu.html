@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="stilo.css">
+        <title>Projektoj Unu</title>
+    </head>
+    <body>
+        <div class="topbar">
+            <a class="ing" href="#HOME">Home</a>
+            <a style="float: right;" href="pri.html">About</a>
+            <a style="float: right;" href="login.html">Log In</a>
+            <div class="dropdown">
+                <button class="dropbtn">Something</button>
+                <div class="dropdown-content">
+                    <a href="https://1hrbld.tw/intermediate-selection-panel/333-cube-notation/" target="_blank">Cubes: 轉動代號</a>
+                    <a href="du.html">Cubes</a>
+                    <a href="tri.html">Games</a>
+                </div>
+            </div>
+        </div>
+        <div class="teksto">
+        <h1 class="teksto">This is the Home Page of My Site!</h1>
+        <button class="primary" id="use" onclick="use()" style="font-size: 30px;">Useless Button</button>
+        <div class="block">
+            <p id="t"><br></p>
+            <button class="primary" id="b" style="font-size: 30px" onclick="text()">Show</button>
+        </div>
+        <br><br><br><button class="danger" onclick="btn()">1</button><button class="warning" onclick="btn()">2</button><button class="light" onclick="btn()">3</button><button class="secondary" onclick="btn()">4</button><button class="success" onclick="btn()">5</button>
+        <p id="tt"></p>
+        </div>
+    </body>
+    <script>
+        function use(){
+            var u=document.getElementById("use");
+            if (u.innerHTML=="Useless Button")document.getElementById("use").innerHTML="Useful button";
+            else if (u.innerHTML=="Useful button")document.getElementById("use").innerHTML="Useless Button";
+        }
+        function text(){
+            var t=document.getElementById("t");
+            if (t.innerHTML=="<br>")t.innerHTML="This is useless.";
+            else if (t.innerHTML!="")t.innerHTML="<br>";
+            var b=document.getElementById("b");
+            if (b.innerHTML=="Show")b.innerHTML="Hide";
+            else if (b.innerHTML=="Hide")b.innerHTML="Show";
+        }
+        var n=0;
+        function btn(){
+            var t1="這個";
+            var t2="網頁";
+            var t3="沒有";
+            var t4="任何";
+            var t5="作用";
+            if (n!=5)n+=1;
+            else n=0;
+            if (n==1)document.getElementById("tt").innerHTML+=t1;
+            if (n==2)document.getElementById("tt").innerHTML+=t2;
+            if (n==3)document.getElementById("tt").innerHTML+=t3;
+            if (n==4)document.getElementById("tt").innerHTML+=t4;
+            if (n==5)document.getElementById("tt").innerHTML+=t5;
+            if (n==0)document.getElementById("tt").innerHTML="";
+        }
+    </script>
+</html>

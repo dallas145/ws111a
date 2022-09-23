@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Sign Up Page
+        </title>
+        <link rel="stylesheet" type="text/css" href="stilo.css">
+    </head>
+    <body>
+        <div class="topbar">
+            <a href="unu.html">Home</a>
+            <a style="float: right;" href="pri.html">About</a>
+            <a style="float: right;" href="login.html">Log In</a>
+            <div class="dropdown">
+                <button class="dropbtn">Something</button>
+                <div class="dropdown-content">
+                    <a href="https://1hrbld.tw/intermediate-selection-panel/333-cube-notation/" target="_blank">Cubes: 轉動代號</a>
+                    <a href="du.html">Cubes</a>
+                    <a href="tri.html">Games</a>
+                </div>
+            </div>
+        </div>
+        <div class="login">
+            <h1>Sign Up</h1>
+            <tr>
+                <td><p><input type="text" name="Username" value="" placeholder="Your Username" id="Username"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="text" name="email" value="" placeholder="Your Email" id="email"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="password" name="password" value="" placeholder="Your Password" id="password"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="password" name="password1" value="" placeholder="Repeat Your Password" id="password1"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="checkbox" name="agree" id="agree">I agree all statements in <a href="https://www.facebook.com/groups/ccccourse">Terms of service</a></p></td>
+            </tr>
+            <script>
+                function submit(){
+                     var c1=document.getElementById("Username");
+                     var c2=document.getElementById("email");
+                     var c3=document.getElementById("password");
+                     var c4=document.getElementById("password1");
+                     var c5=document.getElementById("agree");
+                     var emailRegxp = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                     var t="";
+                     var t1="Your username should be longer than 4 characters.\n";
+                     var t2="You didn't input your email.\n";
+                     var t3="Wrong format of email.\n";
+                     var t4="Your password should be longer than 8 characters\n";
+                     var t5="You didn't repeat your password.\n";
+                     var t6="You didn't check the checkbox.\n";
+                     if (c1.value.length < 4)t+=t1;
+                     if (c2.value=="")t+=t2;
+                     if (c2.value.search(emailRegxp)==-1)t+=t3;
+                     if (c3.value.length < 8)t+=t4;
+                     if (c4.value != c3.value)t+=t5;
+                     if(c5.checked!=true)t+=t6;
+                     if (c1.value.length < 4||c2.value==""||c2.value.search(emailRegxp)==-1||c3.value.length < 8||c4.value != c3.value||c5.checked!=true){
+                        alert(t);
+                     }
+                     else {
+                        alert("系統尚未建置\n為您跳轉至首頁");
+                        location="unu.html";
+                    }
+                } 
+             </script>
+            <button type="button" class="success" onclick="submit()">Submit</button>
+        </div>
+    </body>
+</html>

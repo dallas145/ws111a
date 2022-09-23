@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Sign Up Page
+        </title>
+        <link rel="stylesheet" type="text/css" href="stilo.css">
+    </head>
+    <body>
+        <div class="topbar">
+            <a href="unu.html">Home</a>
+            <a style="float: right;" href="pri.html">About</a>
+            <a class="ing" style="float: right;" href="login.html">Log In</a>
+            <div class="dropdown">
+                <button class="dropbtn">Something</button>
+                <div class="dropdown-content">
+                    <a href="https://1hrbld.tw/intermediate-selection-panel/333-cube-notation/" target="_blank">Cubes: 轉動代號</a>
+                    <a href="du.html">Cubes</a>
+                    <a href="tri.html">Games</a>
+                </div>
+            </div>
+        </div>
+        <div class="login">
+            <h1>Forget</h1>
+            <tr><p>Enter your E-mail and we will not send your password to you.</p></tr>
+            <tr>
+                <td><p><input type="text" name="email" value="" placeholder="Your Email" id="email"></p></td>
+            </tr>
+            <tr>
+                <button type="button" class="success" onclick="submit()">Submit</button>
+            </tr>
+            <script>
+                function submit(){
+                    var c1=document.getElementById("email");
+                    var emailRegxp = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                    if (c1.value=="")alert("You didn't input your email.");
+                    else if (c1.value.search(emailRegxp)==-1)alert("Wrong format of email.");
+                    else location="forgive.html";
+                }
+            </script>
+        </div>
+    </body>
+</html>

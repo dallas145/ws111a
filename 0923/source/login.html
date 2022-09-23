@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Log In Page
+        </title>
+        <link rel="stylesheet" type="text/css" href="stilo.css">
+    </head>
+    <body>
+        <div class="topbar">
+            <a href="unu.html">Home</a>
+            <a style="float: right;" href="pri.html">About</a>
+            <a class="ing" style="float: right;" href="login.html">Log In</a>
+            <div class="dropdown">
+                <button class="dropbtn">Something</button>
+                <div class="dropdown-content">
+                    <a href="https://1hrbld.tw/intermediate-selection-panel/333-cube-notation/" target="_blank">Cubes: 轉動代號</a>
+                    <a href="du.html">Cubes</a>
+                    <a href="tri.html">Games</a>
+                </div>
+            </div>
+        </div>
+        <div class="login">
+            <h1>Log In</h1>
+            <tr>
+                <td><p><input type="text" name="Username" value="" placeholder="Your Username" id="username"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="password" name="password" value="" placeholder="Your Password" id="password"></p></td>
+            </tr>
+            <tr>
+                <td><p><input type="checkbox" name="agree" id="check">Remember me</p></td>
+                <td><p><a href="registri.html">Don't have an account?</a></p></td>
+                <td><p>or</p></td>
+                <td><p><a href="forget.html">Forget your password?</a></p></td>
+            </tr>
+            <tr>
+                <script>
+                    function myfunction(){
+                        var c1=document.getElementById("username");
+                        var c2=document.getElementById("password");
+                        var c3=document.getElementById("check");
+                        var t1="Your username is null.\n";
+                        var t2="Your password is null.\n";
+                        var t3="I don't think this is your username.\n";
+                        var t4="I don't think this is your password.\n";
+                        var t="";
+                        if(c1.value==""){
+                            t+=t1;
+                        }
+                        if(c2.value==""){
+                            t+=t2;
+                        }
+                        if (c1.value.length<4)t+=t3;
+                        if (c2.value.length<8)t+=t4;
+                        if(c1.value==""||c2.value==""||c1.value.length<4||c2.value.length<8){
+                            alert(t);
+                        }
+                        else if(c3.checked==true){
+                            if(confirm("你確定要記住帳號與密碼嗎?")==true){
+                                alert("系統尚未建置\n為您跳轉至首頁");
+                                location="unu.html";
+                            }
+                            else {
+                                alert("系統尚未建置\n為您跳轉至首頁");
+                                location="unu.html";
+                            }
+                        }
+                        else {
+                                alert("系統尚未建置\n為您跳轉至首頁");
+                                location="unu.html";
+                            }
+                    }
+                </script>
+                <button type="button" class="success" id="submit" onclick="myfunction()">Submit</button>
+            </tr>
+        </div>
+    </body>
+</html>
