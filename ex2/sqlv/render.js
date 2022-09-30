@@ -1,4 +1,4 @@
-export function layout(title, time, content) {
+export function layout(title, content) {
   return `
   <html>
   <head>
@@ -56,7 +56,6 @@ export function layout(title, time, content) {
   </head>
   <body>
     <section id="content">
-      ${time}
       ${content}
     </section>
   </body>
@@ -70,7 +69,6 @@ export function list(posts) {
     list.push(`
     <li>
       <h2>${ post.title }</h2>
-      <h3></h3>
       <p><a href="/post/${post.id}">Read post</a></p>
     </li>
     `)
@@ -92,7 +90,6 @@ export function newPost() {
   <p>Create a new post.</p>
   <form action="/post" method="post">
     <p><input type="text" placeholder="Title" name="title"></p>
-    <p><input type="date" value="" name="date"></p>
     <p><textarea placeholder="Contents" name="body"></textarea></p>
     <p><input type="submit" value="Create"></p>
   </form>
@@ -102,7 +99,6 @@ export function newPost() {
 export function show(post) {
   return layout(post.title, `
     <h1>${post.title}</h1>
-    <pre>${post.time}<pre>
-    <pre>${post.body}</pre>
+    <p>${post.body}</p>
   `)
 }
