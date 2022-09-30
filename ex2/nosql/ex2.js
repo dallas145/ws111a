@@ -2,8 +2,8 @@ import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import * as render from './render.js'
 
 const posts = [
-  {id:0, title:'aaa', datetime:'2022-9-11T01:30', body:'aaaaa'},
-  {id:1, title:'bbb', datetime:'2022-9-12T20:06', body:'bbbbb'}
+  {id:0, title:'Poop', datetime:'2022-9-11T01:30', body:'Go to toilet and poop.'},
+  {id:1, title:'Eat', datetime:'2022-9-12T18:06', body:'Go to restaurant and eat.'}
 ];
 
 const router = new Router();
