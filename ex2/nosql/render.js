@@ -1,4 +1,4 @@
-export function layout(title, time, content) {
+export function layout(title, content) {
   return `
   <html>
   <head>
@@ -56,7 +56,6 @@ export function layout(title, time, content) {
   </head>
   <body>
     <section id="content">
-      ${time}
       ${content}
     </section>
   </body>
@@ -102,7 +101,7 @@ export function newPost() {
 export function show(post) {
   return layout(post.title, `
     <h1>${post.title}</h1>
-    <pre>${post.time}<pre>
+    <pre>${post.date}</pre>
     <pre>${post.body}</pre>
   `)
 }
