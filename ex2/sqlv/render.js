@@ -1,8 +1,8 @@
-export function layout(title, content) {
+export function layout(datetime, content) {
   return `
   <html>
   <head>
-    <title>${title}</title>
+    <title>${datetime}</title>
     <style>
       body {
         padding: 80px;
@@ -68,15 +68,16 @@ export function list(posts) {
   for (let post of posts) {
     list.push(`
     <li>
-      <h2>${ post.title }</h2>
-      <p><a href="/post/${post.id}">Read post</a></p>
+    <h2>${post.datetime}</h2>
+    <h3>${post.title}</h3>
+    <p><a href="/post/${post.id}">Read more</a></p>
     </li>
     `)
   }
   let content = `
-  <h1>Posts</h1>
-  <p>You have <strong>${posts.length}</strong> posts!</p>
-  <p><a href="/post/new">Create a Post</a></p>
+  <h1>Events</h1>
+  <p>You have <strong>${posts.length}</strong> events!</p>
+  <p><a href="/post/new">Create a Event</a></p>
   <ul id="posts">
     ${list.join('\n')}
   </ul>
@@ -85,11 +86,12 @@ export function list(posts) {
 }
 
 export function newPost() {
-  return layout('New Post', `
-  <h1>New Post</h1>
-  <p>Create a new post.</p>
+  return layout('New Event', `
+  <h1>New Event</h1>
+  <p>Create a new event.</p>
   <form action="/post" method="post">
     <p><input type="text" placeholder="Title" name="title"></p>
+    <p><input type="datetime-local" value="" name="datetime"></p>
     <p><textarea placeholder="Contents" name="body"></textarea></p>
     <p><input type="submit" value="Create"></p>
   </form>
@@ -97,8 +99,11 @@ export function newPost() {
 }
 
 export function show(post) {
-  return layout(post.title, `
-    <h1>${post.title}</h1>
-    <p>${post.body}</p>
+  return layout(post.datetime, `
+    <h1>${post.datetime}</h1>
+    <h2>${post.title}</h2>
+    <pre>${post.body}</pre>
+    </br></br>
+    <p><a href="/">Back to main page</a></p>
   `)
 }
