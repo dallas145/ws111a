@@ -18,10 +18,15 @@ app.use(router.allowedMethods());
 
 function query(sql){
     let list = [];
-    
+    for(const [id, title, body] of db.query(sql)){
+        list.push({id, title, body});
+    }
+    return list;
 }
 
 async function list(ctx){
+    let posts = query("SELECT id, title, body FROM posts");
+    console.log('list:posts=',posts);
     ctx.response.body = await render.list(posts);
 }
 
