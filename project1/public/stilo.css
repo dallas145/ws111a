@@ -1,5 +1,6 @@
 body{
     background-color:#FDF5E6;
+    font-family:sans-serif;
 }
 button{
 	padding: 9px 16px;
@@ -88,11 +89,13 @@ h2{
 .login{
     width: 75%;
     text-align: center;
-
     border: 1px solid #000000;
     border-radius: 5px;
     margin: auto;
     margin-top: 50px;
+}
+.login a{
+    color:black;
 }
 input[type=text],input[type="password"]{
     padding:5px 15px;
@@ -175,6 +178,7 @@ input[type=text],input[type="password"]{
 }
 .block{
     width: 75%;
+    font-family: Arial, Helvetica, sans-serif;
     text-align: center;
     border: 1px solid #000000;
     border-radius: 5px;
@@ -183,9 +187,31 @@ input[type=text],input[type="password"]{
     box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15),0 10px 10px 0 rgba(0,0,0,0.19);
 }
 .typein{
-    padding: 9px 16px;
-    margin: 2px;
+    padding: 5px 10px;
+    margin: 5px;
     width: 60%;
+    height: 50%;
+    resize: none;
+    font-size: 20px;
+    border-radius:5px;
+}
+.typein p{
+    color: rgb(17, 17, 17)
+}
+.time{
+    font-size: medium;
+    font-family:monospace;
+    font-style: normal;
+}
+a {
+    font-style: normal;
+    text-decoration: none;
+    color:green;
+}
+.rply{
+    padding: 5px 10px;
+    margin: 5px;
+    width: 35%;
     height: 50%;
     resize: none;
     font-size: 20px;

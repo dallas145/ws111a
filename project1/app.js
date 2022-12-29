@@ -10,7 +10,9 @@ server.router.get('/', home)
 .get('/userList', userList)
 .post('/login', login)
 .post('/signup', signup)
+.post('/forget1', forget)
 .post('/msgAdd/:uto', msgAdd)
+.post('/delete', deleteMsg)
 .post('/logout', logout)
 .post('/replyAdd/:mid', replyAdd)
 .get('/msgGet/:id', msgGet)
@@ -27,6 +29,13 @@ async function home(ctx) {
 async function userList(ctx) {
     let users = await db.userList()
     sendJson(ctx, users)
+}
+
+async function deleteMsg(ctx) {
+  const params = await bodyParams(ctx)
+  console.log('params=', params)
+  await db.deleteMsg(params.mid)
+  sendStatus(ctx, Status.OK)
 }
 
 async function signup(ctx) {
@@ -51,6 +60,18 @@ async function login(ctx) {
     sendStatus(ctx, Status.OK)
   } else
     sendStatus(ctx, Status.Fail)
+}
+
+async function forget(ctx) {
+  const params = await bodyParams(ctx)
+  console.log(`user=${params.user0},email=${params.email0}`)
+  let user = await db.userForget(params.user0)
+  console.log(`user:${params.user0} forget password`)
+  console.log(`useremail= ${user.email}`)
+  console.log(`paramsemail= ${params.email0}`)
+  if (user.email==params.email0) {
+    sendJson(ctx, user)
+  }
 }
 
 async function logout(ctx) {

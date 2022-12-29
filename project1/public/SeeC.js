@@ -3,6 +3,7 @@ window.onhashchange = async function () {
     var user
     switch (tokens[0]) {
       case '#home':
+        localStorage.setItem('admin', undefined)
         Ui.goto('#msgs')
         break
       case '#userList':
@@ -19,6 +20,15 @@ window.onhashchange = async function () {
         break
       case '#logout':
         await logout()
+        break
+      case '#forget':
+        await forget()
+        break
+      case '#sudo':
+        await adminPanel()
+        break
+      case '#admin':
+        await RealAdminPanel()
         break
       case '#Yours':
         user = localStorage.getItem('user')
@@ -48,12 +58,93 @@ window.onhashchange = async function () {
 
 window.onload = function () {
   window.onhashchange()
+  console.log(localStorage.getItem('user'))
+}
+
+async function adminPanel() {
+  Ui.show(`
+  <div class="login">
+    <form>
+      <h1>Admin Log In</h1>
+      <tr>
+          <td><p><input type="text" name="Username" placeholder="Admin Username" id="user"></p></td>
+      </tr>
+      <tr>
+          <td><p><input type="password" name="password" placeholder="Admin Password" id="password"></p></td>
+      </tr>
+      <tr>
+          <button type="button" class="dark" id="submit" onclick="gotoAdminPanel()">Log In</button>
+      </tr>
+    </form>
+  </div>
+  `)
+}
+
+async function gotoAdminPanel() {
+  let aname = Ui.id('user').value
+  let apass = Ui.id('password').value
+  if (aname == 'admin' && apass == 'admin') {
+    localStorage.setItem('admin', 'admin')
+    Ui.goto('#admin')
+  }
+  else alert('Wrong super username and super password.')
+}
+
+async function RealAdminPanel() {
+  let admin = localStorage.getItem('admin')
+  if (admin!='undefined') {
+    let r = await Server.get('/msglist')
+    let msgs = r.obj
+    let outs = []
+    let user = localStorage.getItem('user')
+    let mid
+    for (let msg of msgs) {
+      mid = msg.mid
+      outs.push(msgToHtmlForAdmin(msg))
+    }
+    if(user=='undefined'||user==null){
+      alert('Login to continue.')
+      Ui.goto('#login')
+    }
+    else{
+      Ui.show(`
+      <div class="block">
+        <button class="warning" onclick="exitadmin()">Exit admin mode</button>
+        <h2>All Posts:</h2>
+        ${outs.join('\n<hr>')}\n
+      </div>
+      
+      `
+      )
+    }
+  }
+  else {
+    alert('Login to continue')
+    Ui.goto('#sudo')
+  }
+}
+
+async function exitadmin() {
+  let yes = confirm('Are you sure about that?')
+  if (yes) {
+    localStorage.setItem('admin', undefined)
+    Ui.goto('#home')
+  }
+}
+
+async function serverDelete(mid) {
+  console.log("i=",mid)
+  let r = await Server.post('/delete', {mid})
+  if (r.status == Status.OK) {
+    alert('Delete successfully')
+    await RealAdminPanel()
+  }
 }
 
 function usersHtml(users) {
   let outs = []
   for (let user of users) {
-    outs.push(`<li><a href="#msgBy/${user}">${user}</a></li>`)
+    outs.push(`<p><a href="#msgBy/${user}">${user}</a></p>`)
   }
   return outs.join('\n')
 }
@@ -63,52 +154,78 @@ async function userList() {
   let users = r.obj
   console.log('users=', users)
   Ui.show(`<div class="block">
-  <h1>Users</h1>\n<ul>\n${usersHtml(users)}\n</ul>\n
+  <h1>Users</h1>\n${usersHtml(users)}\n\n
   </div>`)
 }
 
-async function userCheck() {
-
+async function forget() {
+  Ui.show(`
+  <div class="login">
+    <form>
+    <h1>Forget password</h1>
+    <p>Answer the question below to get your password.</p>
+    <tr>
+      <td><p><input type="text" placeholder="Your Username" id="usera"></p></td>
+    </tr>
+    <tr>
+      <td><p><input type="text" placeholder="Repeat Your Username" id="userb"></p></td>
+    </tr>
+    <tr>
+      <td><p><input type="text" placeholder="Your E-mail" id="emaila"></p></td>
+    </tr>
+    <tr>
+      <td><p><input type="text" placeholder="Repeat Your E-mail" id="emailb"></p></td>
+    </tr>
+    <button type="button" class="dark" onclick="serverForget()">Submit</button>
+    </form>
+  </div>
+  `)
 }
 
 async function signup() {
-    Ui.show(`
-    <div class="login">
+  Ui.show(`
+  <div class="login">
     <form>
-            <h1>Sign Up</h1>
-            <tr>
-                <td><p><input type="text" name="Username" placeholder="Your Username" id="user"></p></td>
-            </tr>
-            <tr>
-                <td><p><input type="text" name="email" placeholder="Your Email" id="email"></p></td>
-            </tr>
-            <tr>
-                <td><p><input type="password" name="password" placeholder="Your Password" id="password"></p></td>
-            </tr>
-            <button type="button" class="success" onclick="serverSignup()">Submit</button>
-            </form>
-        </div>`)
+      <h1>Sign Up</h1>
+      <tr>
+        <td><p><input type="text" name="Username" placeholder="Your Username" id="user"></p></td>
+      </tr>
+      <tr>
+        <td><p><input type="text" name="email" placeholder="Your Email" id="email"></p></td>
+      </tr>
+      <tr>
+        <td><p><input type="password" name="password" placeholder="Your Password" id="password"></p></td>
+      </tr>
+      <button type="button" class="dark" onclick="serverSignup()">Submit</button>
+    </form>
+  </div>`)
   }
 
 async function login() {
-    Ui.show(`
-    <div class="login">
-                <form>
-                <h1>Log In</h1>
-                <tr>
-                    <td><p><input type="text" name="Username" placeholder="Your Username" id="user"></p></td>
-                </tr>
-                <tr>
-                    <td><p><input type="password" name="password" placeholder="Your Password" id="password"></p></td>
-                </tr>
-                <tr>
-                    <td><p><a href="#signup">Don't have an account?</a></p></td>
-                </tr>
-                <tr>
-                    <button type="button" class="success" id="submit" onclick="serverLogin()">Log In</button>
-                </tr>
-            </form>
-            </div>`)
+  Ui.show(`
+  <div class="login">
+    <form>
+      <h1>Log In</h1>
+      <tr>
+          <td><p><input type="text" name="Username" placeholder="Your Username" id="user"></p></td>
+      </tr>
+      <tr>
+          <td><p><input type="password" name="password" placeholder="Your Password" id="password"></p></td>
+      </tr>
+      <tr>
+          <td><p><a href="#signup">Don't have an account?</a></p></td>
+      </tr>
+      <tr>
+          <td><p>or</p></td>
+      </tr>
+      <tr>
+          <td><p><a href="#forget">Forget your password?</a></p></td>
+      </tr>
+      <tr>
+          <button type="button" class="dark" id="submit" onclick="serverLogin()">Log In</button>
+      </tr>
+    </form>
+  </div>`)
 }
 
 async function serverSignup() {
@@ -137,6 +254,33 @@ async function serverLogin() {
       alert('登入失敗: 請輸入正確的帳號密碼!')
 }
 
+async function serverForget() {
+  let user0 = Ui.id('usera').value
+  let user1 = Ui.id('userb').value
+  let email0 = Ui.id('emaila').value
+  let email1 = Ui.id('emailb').value
+  // console.log(user0)
+  // console.log(user1)
+  // console.log(email0)
+  // console.log(email1)
+  let r = await Server.post('/forget1', {user0, email0})
+  if (user0==user1 & email0==email1) {
+    console.log(user0)
+    console.log(email0)
+    //let r = await Server.post('/forget', {user0, email0})
+    if (r.status== Status.OK) {
+      console.log('serverForget: r=',r)
+      let user2 = r.obj
+      console.log('info=',user2.pass)
+      alert(`Your password is:\n${user2.pass}`)
+      Ui.goto('#login')
+    }
+  }
+  else {
+    alert('Not match')
+  }
+}
+
 async function logout() {
   user = localStorage.getItem('user')
   if (user=='undefined'){
@@ -158,8 +302,14 @@ async function serverlogout() {
     localStorage.setItem('user', undefined)
   }
   else {
-    alert('你根本沒登入!')
-    Ui.goto('#login')
+    if (localStorage.getItem('user')!= 'undefined') {
+      localStorage.setItem('user', undefined)
+      Ui.goto('#login')
+    }
+    else {
+      alert('你根本沒登入!')
+      Ui.goto('#login')
+    }
   }
 }
 
@@ -171,40 +321,36 @@ async function Newpost() {
   }
   else {
     Ui.show(`
-    <div class="block">
-    <textarea class="typein" id="say" placeholder="${user} put something here!" maxlength=50></textarea>
-        <span class="wordsNum">0/50</span>
-        <button class="secondary" onclick="serverSayit(Ui.id('say').value)">說了</button></h2>
+    <div>
+    <textarea class="typein" id="say" placeholder="${user} put something here!" maxlength=100></textarea>
+      <br><button class="secondary" style="font-size: large" onclick="serverSayit(Ui.id('say').value)">Post</button></h2>
     </div>`)
   }
 }
 
-function msgToHtml(msg) {
-  return `
-    <div class="title" onclick="Ui.goto('#msgGet/${msg.mid}')">
-      <p>
-        <em class="user"><a href="#msgBy/${msg.ufrom}">${msg.ufrom}</a></em> : 
-        ${msgFormat(msg.msg)} 
-        <em class="time">${timeFormat(msg.time)}</em>
-      </p>
-    </div>
-    `
-}
-
 async function serverSayit(msg) {
   let user = localStorage.getItem('user')
-  let r = await Server.post(`/msgAdd/${user}`, {msg})
-  console.log(`sayit: user=${user} r=`, r)
-  if (r.status == Status.OK) {
-    Ui.goto(`#`)
-    Ui.goto(`#msgBy/${user}`)
-  } else
-    alert('貼文失敗!')
+  if (msg!="") {
+    let r = await Server.post(`/msgAdd/${user}`, {msg})
+    console.log(`sayit: user=${user} r=`, r)
+    if (r.status == Status.OK) {
+      Ui.goto(`#`)
+      Ui.goto(`#home`)
+    } else
+      alert('貼文失敗!')
+  }
+  else {
+    alert('空白貼文禁止')
+  }
 }
 
 async function serverReplyAdd(mid) {
   // let user = localStorage.getItem('user')
   let msg = Ui.id('reply').value
+  if (msg=="") {
+    alert('空白回覆禁止')
+    pass
+  }
   console.log('reply:msg=', msg)
   let r = await Server.post(`/replyAdd/${mid}`, {mid, msg})
   if (r.status == Status.OK) {
@@ -248,6 +394,7 @@ function replysToHtml(replys) {
   for (let reply of replys) {
     list.push(`
     <div>
+    <hr>
       <p><em class="user"><a href="#msgBy/${reply.user}">${reply.user}</a></em> : 
       ${reply.msg}</p>
       <p><em class="time">${timeFormat(msg.time)}</em></p>
@@ -262,44 +409,60 @@ function msgToHtml(msg) {
       <p>
         <em class="user"><a href="#msgBy/${msg.ufrom}">${msg.ufrom}</a></em> : 
         ${msgFormat(msg.msg)} 
-        <em class="time">${timeFormat(msg.time)}</em>
+        <br><em class="time">${timeFormat(msg.time)}</em>
       </p>
     </div>
+    `
+}
+
+function msgToHtmlForAdmin(msg) {
+  return `
+    <div class="title">
+      <p>
+        <em class="user"><a href="#msgBy/${msg.ufrom}">${msg.ufrom}</a></em> : 
+        ${msgFormat(msg.msg)} 
+        <br><em class="time">${timeFormat(msg.time)}</em>
+      </p>
+    </div>
+    <button class="danger" onclick="serverDelete(${msg.mid})">Delete</button>
     `
 }
 
 async function msgGet(id) {
   let r = await Server.get(`/msgGet/${id}`)
   msg = r.obj
-  Ui.show(`
+  Ui.show(`<div><button class="warning" onclick="Ui.goto('#home')">Back to home page</button></div>
+  <div class="block"><h3>Original post:</h3>
     ${msgToHtml(msg)}\n
     <div>
-      <textarea id="reply"></textarea>
-      <button class="op" onclick="serverReplyAdd(${msg.mid})">回應本文</botton>
+      <textarea id="reply" class="rply" maxlength=100 placeholder="Reply here"></textarea>
+      <br><button class="danger" onclick="serverReplyAdd(${msg.mid})">Reply</botton>
     </div>
-    ${replysToHtml(msg.replys)}`
-  )
+    ${replysToHtml(msg.replys)}
+    </div><br><br>
+    <div><button class="warning" onclick="Ui.goto('#home')">Back to home page</button></div>
+    `)
 }
 
 function search() {
   Ui.goto(`#msgKey/${Ui.id('queryBox').value}`)
 }
 
-async function msgKey(key) {
-  let r = await Server.get(`/msgKey/${key}`)
-  let msgs = r.obj
-  let outs = []
-  for (let msg of msgs) {
-    outs.push(msgToHtml(msg))
-  }
-  Ui.show(`
-  <div class="searchBox">
-    <input id="queryBox" type="text" value="${key}"/>
-    <button onclick="search()">查查</button>
-  </div>\n
-  <h1>查詢結果</h1>
-  <ul>${outs.join('\n')}</ul>`)
-}
+// async function msgKey(key) {
+//   let r = await Server.get(`/msgKey/${key}`)
+//   let msgs = r.obj
+//   let outs = []
+//   for (let msg of msgs) {
+//     outs.push(msgToHtml(msg))
+//   }
+//   Ui.show(`
+//   <div class="searchBox">
+//     <input id="queryBox" type="text" value="${key}"/>
+//     <button onclick="search()">查查</button>
+//   </div>\n
+//   <h1>查詢結果</h1>
+//   <ul>${outs.join('\n')}</ul>`)
+// }
 
 async function allmsg() {
   let r = await Server.get('/msglist')
@@ -309,15 +472,15 @@ async function allmsg() {
   for (let msg of msgs) {
     outs.push(msgToHtml(msg))
   }
-  if(user=='undefined'){
+  if(user=='undefined'||user==null){
     alert('Login to continue.')
     Ui.goto('#login')
   }
   else{
     Ui.show(`
     <div class="block">
-      <h2>Posts:</h2>
-      ${outs.join('\n')}\n
+      <h2>All Posts:</h2>
+      ${outs.join('\n<hr>')}\n
     </div>
     
     `
@@ -338,15 +501,20 @@ async function msgList(op, user) {
     Ui.goto('#login')
   }
   else{
-    Ui.show(`
-    <div class="block">
-      <h2>${user}'s Posts:</h2>
-      ${outs.join('\n')}\n
-    </div>
-    
-    `
-    )
-  }
+      if (user==luser) {
+        Ui.show(`
+          <div class="block">
+            <h2>Your Posts:</h2>
+            ${outs.join('\n<hr>')}\n
+          </div>
+    `)}
+    else {
+      Ui.show(`
+          <div class="block">
+            <h2>${user}'s Posts:</h2>
+            ${outs.join('\n<hr>')}\n
+          </div>
+    `)}}
 }
 
 function uriDecode(line) {

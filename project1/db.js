@@ -43,6 +43,22 @@ export async function userGet(user1) {
     return {uid, user, pass, email}
 }
 
+export function queryToUsers(q) {
+    let users=[]
+    for (let [uid, user, pass, email] of q) {
+    users.push({uid, user, pass, email})
+    }
+    return users
+}
+
+export async function userForget(user1) {
+    let q = db.query(`SELECT uid, user, pass, email FROM users 
+                    WHERE user=?`, [user1])
+    console.log(`userGet(${user1})=${q}`)
+    console.log(queryToUsers(q)[0])
+    return queryToUsers(q)[0]
+}
+
 export async function userList() {
     let q = db.query(`SELECT user FROM users`, [])
     let users = []
@@ -95,17 +111,20 @@ export function queryToMsgs(q) {
     return msgs
 }
 
+export async function deleteMsg(mid) {
+    db.query(`DELETE FROM msgs WHERE mid=${mid}`)
+}
+
 export async function msgS() {
     let q = db.query(`SELECT mid, msg, ufrom, time
                     FROM msgs ORDER BY time DESC LIMIT ${NLIMIT}`)
-    console.log(q)
     return queryToMsgs(q)
 }
 
 export async function msgBy(user) {
     let q = db.query(`SELECT mid, msg, ufrom, time
             FROM msgs WHERE ufrom=? ORDER BY time DESC LIMIT ${NLIMIT}`, [user])
-    console.log(q)
+    // console.log(q)
     return queryToMsgs(q)
 }
 
