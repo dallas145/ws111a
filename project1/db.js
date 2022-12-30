@@ -103,6 +103,18 @@ export async function msgGet(mid) {
     return {mid, msg, ufrom, time, replys}
 }
 
+export async function usercheck(user) {
+    try {
+        let user1 = db.query(`SELECT user FROM users WHERE user=?`,[user])
+        console.log('user=',user1[0][0])
+        return true
+    }
+    catch {
+        console.log('cant get user')
+        return false
+    }
+}
+
 export function queryToMsgs(q) {
     let msgs = []
     for (let [mid, msg, ufrom, time] of q) {

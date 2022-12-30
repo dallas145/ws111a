@@ -20,6 +20,7 @@ server.router.get('/', home)
 .get('/msgS', msgS)
 .get('/msglist', msgList)
 .get('/msgKey/:key', msgKey)
+.get('/usercheck/:user', usercheck)
 
 
 async function home(ctx) {
@@ -29,6 +30,13 @@ async function home(ctx) {
 async function userList(ctx) {
     let users = await db.userList()
     sendJson(ctx, users)
+}
+
+async function usercheck(ctx) {
+  let user = await db.usercheck(ctx.params['user'])
+  console.log(user)
+  if (user) sendStatus(ctx, Status.OK)
+  else sendStatus(ctx, Status.Fail)
 }
 
 async function deleteMsg(ctx) {

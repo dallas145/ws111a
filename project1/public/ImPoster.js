@@ -85,6 +85,7 @@ async function gotoAdminPanel() {
   let apass = Ui.id('password').value
   if (aname == 'admin' && apass == 'admin') {
     localStorage.setItem('admin', 'admin')
+    alert('Admin mode ON')
     Ui.goto('#admin')
   }
   else alert('Wrong super username and super password.')
@@ -114,9 +115,7 @@ async function RealAdminPanel() {
         ${outs.join('\n<hr>')}\n
       </div>
       
-      `
-      )
-    }
+      `)}
   }
   else {
     alert('Login to continue')
@@ -134,10 +133,13 @@ async function exitadmin() {
 
 async function serverDelete(mid) {
   console.log("i=",mid)
-  let r = await Server.post('/delete', {mid})
-  if (r.status == Status.OK) {
-    alert('Delete successfully')
-    await RealAdminPanel()
+  let yes = confirm(`You sure you want to delete\npost id: ${mid} ?`)
+  if (yes) {
+    let r = await Server.post('/delete', {mid})
+    if (r.status == Status.OK) {
+      alert('Delete successfully')
+      await RealAdminPanel()
+    }
   }
 }
 
@@ -176,7 +178,7 @@ async function forget() {
     <tr>
       <td><p><input type="text" placeholder="Repeat Your E-mail" id="emailb"></p></td>
     </tr>
-    <button type="button" class="dark" onclick="serverForget()">Submit</button>
+    <button type="button" class="dark" onclick="serverForget()">Submit</button><br><br>
     </form>
   </div>
   `)
@@ -196,7 +198,7 @@ async function signup() {
       <tr>
         <td><p><input type="password" name="password" placeholder="Your Password" id="password"></p></td>
       </tr>
-      <button type="button" class="dark" onclick="serverSignup()">Submit</button>
+      <button type="button" class="dark" onclick="serverSignup()">Submit</button><br><br>
     </form>
   </div>`)
   }
@@ -222,7 +224,7 @@ async function login() {
           <td><p><a href="#forget">Forget your password?</a></p></td>
       </tr>
       <tr>
-          <button type="button" class="dark" id="submit" onclick="serverLogin()">Log In</button>
+          <button type="button" class="dark" id="submit" onclick="serverLogin()">Log In</button><br><br>
       </tr>
     </form>
   </div>`)
@@ -323,7 +325,7 @@ async function Newpost() {
     Ui.show(`
     <div>
     <textarea class="typein" id="say" placeholder="${user} put something here!" maxlength=100></textarea>
-      <br><button class="secondary" style="font-size: large" onclick="serverSayit(Ui.id('say').value)">Post</button></h2>
+      <br><button class="secondary" style="font-size: large" onclick="serverSayit(Ui.id('say').value)">Post</button></h2><br>
     </div>`)
   }
 }
@@ -376,6 +378,7 @@ function timeFormat(time) {
 function msgFormat(msg) {
   var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   var html = msg.replace(linkExp,"<a href='$1'>$1</a>")
+  html = html.replace(/#(\w+)/ig, "<a href='#msgKey/$1'>#$1</a>")
   html = html.replace(/@(\w+)/ig, "<a href='#msgBy/$1'>$1</a>")
   html = html.replace(/\n/ig, '<br/>')
   return html
@@ -436,11 +439,11 @@ async function msgGet(id) {
     ${msgToHtml(msg)}\n
     <div>
       <textarea id="reply" class="rply" maxlength=100 placeholder="Reply here"></textarea>
-      <br><button class="danger" onclick="serverReplyAdd(${msg.mid})">Reply</botton>
+      <br><button class="danger" onclick="serverReplyAdd(${msg.mid})">Reply</botton><br>
     </div>
     ${replysToHtml(msg.replys)}
     </div><br><br>
-    <div><button class="warning" onclick="Ui.goto('#home')">Back to home page</button></div>
+    <div><button class="warning" onclick="Ui.goto('#home')">Back to home page</button><br><br></div>
     `)
 }
 
@@ -448,21 +451,18 @@ function search() {
   Ui.goto(`#msgKey/${Ui.id('queryBox').value}`)
 }
 
-// async function msgKey(key) {
-//   let r = await Server.get(`/msgKey/${key}`)
-//   let msgs = r.obj
-//   let outs = []
-//   for (let msg of msgs) {
-//     outs.push(msgToHtml(msg))
-//   }
-//   Ui.show(`
-//   <div class="searchBox">
-//     <input id="queryBox" type="text" value="${key}"/>
-//     <button onclick="search()">查查</button>
-//   </div>\n
-//   <h1>查詢結果</h1>
-//   <ul>${outs.join('\n')}</ul>`)
-// }
+async function msgKey(key) {
+  let r = await Server.get(`/msgKey/${key}`)
+  let msgs = r.obj
+  let outs = []
+  for (let msg of msgs) {
+    outs.push(msgToHtml(msg))
+  }
+  Ui.show(`
+  <div class="block">
+  <ul>${outs.join('\n<hr>')}</ul>
+  </div>\n`)
+}
 
 async function allmsg() {
   let r = await Server.get('/msglist')
@@ -490,21 +490,26 @@ async function allmsg() {
 
 async function msgList(op, user) {
   let r = await Server.get(`/msg${op}/${user}`)
+  let poster = await Server.get(`/usercheck/${user}`)
   let msgs = r.obj
   let outs = []
   let luser = localStorage.getItem('user')
   for (let msg of msgs) {
     outs.push(msgToHtml(msg))
   }
+  //console.log('outs=',outs)
   if(luser=='undefined'){
     alert('Login to continue.')
     Ui.goto('#login')
+  }
+  else if (poster.status!=Status.OK) {
+    alert('User not exist.')
   }
   else{
       if (user==luser) {
         Ui.show(`
           <div class="block">
-            <h2>Your Posts:</h2>
+            <h2>(you)${user}'s Posts:</h2>
             ${outs.join('\n<hr>')}\n
           </div>
     `)}
